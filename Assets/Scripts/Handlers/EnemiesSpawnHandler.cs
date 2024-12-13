@@ -2,6 +2,8 @@
 using Cysharp.Threading.Tasks;
 using Enemies;
 using Level;
+using States;
+using States.Enemy;
 using UnityEngine;
 using View;
 using Zenject;
@@ -12,12 +14,14 @@ namespace Handlers
     {
         [SerializeField] private SpawnPoint[] _spawnPoints;
 
-        private IViewPool _viewPool; 
+        private IViewPool _viewPool;
+        private LevelHandler _levelHandler;
 
         [Inject]
-        private void InstallBindings(IViewPool viewPool)
+        private void InstallBindings(IViewPool viewPool, LevelHandler levelHandler)
         {
             _viewPool = viewPool;
+            _levelHandler = levelHandler;
         }
 
         private async void Awake()
@@ -38,7 +42,17 @@ namespace Handlers
             
             var index = Random.Range(0, unlockedPoints.Length);
             var position = unlockedPoints[index].transform.position;
-            await _viewPool.Pop<Enemy>(position, transform);
+            var view = await _viewPool.Pop<Enemy>(position, transform);
+            SetMoveStateEnemy(view);
+        }
+
+        private void SetMoveStateEnemy(Enemy view)
+        {
+            var targetPosition = new Vector2(
+                x: Random.Range(_levelHandler.XLimits.x, _levelHandler.XLimits.y), 
+                y: Random.Range(_levelHandler.YLimits.x, _levelHandler.YLimits.y));
+
+            view.Move(targetPosition);
         }
     }
 }

@@ -1,4 +1,5 @@
 using Handlers;
+using Level;
 using Player.Input;
 using Providers;
 using UnityEngine;
@@ -10,6 +11,7 @@ namespace Installers
     public class LevelInstaller : MonoInstaller
     {
         [SerializeField] private InputManager _inputManager;
+        [SerializeField] private LevelHandler _levelHandler;
 
         public override void InstallBindings()
         {
@@ -26,6 +28,10 @@ namespace Installers
                 .NonLazy();
 
             Container.BindInterfacesAndSelfTo<EnemiesSpawnHandler>()
+                .AsSingle();
+
+            Container.Bind<LevelHandler>()
+                .FromInstance(_levelHandler)
                 .AsSingle();
         }
     }
