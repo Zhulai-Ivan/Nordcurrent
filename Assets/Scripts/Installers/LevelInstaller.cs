@@ -1,3 +1,4 @@
+using Handlers;
 using Player.Input;
 using Providers;
 using UnityEngine;
@@ -23,6 +24,9 @@ namespace Installers
             Container.BindInterfacesTo<ViewPool>()
                 .AsSingle()
                 .NonLazy();
+
+            Container.BindInterfacesAndSelfTo<EnemiesSpawnHandler>()
+                .AsSingle();
         }
     }
 }

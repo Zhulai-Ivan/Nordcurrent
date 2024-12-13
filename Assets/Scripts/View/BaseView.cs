@@ -1,22 +1,18 @@
 ﻿using UnityEngine;
-using View;
 using Zenject;
 
-namespace Enemy
+namespace View
 {
     public abstract class BaseView : MonoBehaviour
     {
-        private ViewPool _viewPool;
+        protected IViewPool ViewPool;
 
         [Inject]
-        private void InstallBindings(ViewPool viewPool)
+        private void InstallBindings(IViewPool viewPool)
         {
-            _viewPool = viewPool;
+            ViewPool = viewPool;
         }
 
-        public virtual void Push()
-        {
-            _viewPool.Push(this);
-        }
+        public abstract void Push();
     }
 }

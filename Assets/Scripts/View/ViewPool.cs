@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
-using Enemy;
 using ModestTree;
 using Player.Bullet;
 using Providers;
@@ -16,11 +15,13 @@ namespace View
         private readonly Dictionary<string, Stack<BaseView>> _typePool = new Dictionary<string, Stack<BaseView>>();
         
         private readonly AddressablesProvider _addressablesProvider;
+        private readonly DiContainer _container;
 
         [Inject]
-        public ViewPool(AddressablesProvider addressablesProvider)
+        public ViewPool(AddressablesProvider addressablesProvider, DiContainer container)
         {
             _addressablesProvider = addressablesProvider;
+            _container = container;
         }
         
         public async UniTask<T> Pop<T>(Vector3 position, Transform parent) where T : BaseView
@@ -29,12 +30,13 @@ namespace View
             if (_typePool.Keys.ContainsItem(typeof(T).Name) &&_typePool[typeof(T).Name].Count > 0)
             {
                 view = _typePool[typeof(T).Name].Pop() as T;
+                view.gameObject.transform.position = position;
                 view.gameObject.SetActive(true);
             }
             else
             {
                 var prefab = await _addressablesProvider.LoadAsync<GameObject>(typeof(T).Name);
-                var instance = Object.Instantiate(prefab, position, Quaternion.identity, parent);
+                var instance = _container.InstantiatePrefabForComponent<T>(prefab, position, Quaternion.identity, parent);
                 view = instance.GetComponent<T>();
                 
                 if(view == null)
@@ -45,8 +47,6 @@ namespace View
                 {
                     _typePool.Add(typeof(T).Name, new Stack<BaseView>());
                 }
-                
-                _typePool[typeof(T).Name].Push(view);
             }
             
             return view != null ? view : null;

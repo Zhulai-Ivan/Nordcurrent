@@ -1,8 +1,7 @@
-﻿using Enemy;
+﻿using System;
 using Modules;
 using Player.Bullet;
 using View;
-using Zenject;
 
 namespace Enemies
 {
@@ -11,18 +10,18 @@ namespace Enemies
         private BaseTrack _tracks;
         private BaseBody _body;
         private BaseTower _tower;
-        private ViewPool _viewPool;
 
-        [Inject]
-        private void InstallBindings(ViewPool viewPool)
-        {
-            _viewPool = viewPool;
-        }
-
+        public event Action Pushed;
+        
         public void HandleBulletEnter(Bullet bullet)
         {
-            _viewPool.Push(bullet);
-            // change state to dead
+            Push();
+        }
+
+        public override void Push()
+        {
+            ViewPool.Push(this);
+            Pushed?.Invoke();
         }
     }
 }

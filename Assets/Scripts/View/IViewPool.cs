@@ -1,5 +1,4 @@
 ﻿using Cysharp.Threading.Tasks;
-using Enemy;
 using UnityEngine;
 
 namespace View

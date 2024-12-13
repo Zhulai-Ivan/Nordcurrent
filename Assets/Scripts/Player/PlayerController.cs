@@ -41,8 +41,7 @@ namespace Player
         private async void OnFire()
         {
             var bullet = await _viewPool.Pop<Bullet.Bullet>(_bulletSpawnPoint.position, _bulletSpawnPoint);
-            bullet.Direction = transform.up;
-
+            bullet.Direction = _bulletSpawnPoint.up.normalized;
         }
 
         private void OnMove(float direction)

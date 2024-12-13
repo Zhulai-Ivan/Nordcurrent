@@ -1,7 +1,6 @@
-﻿using System;
-using Enemies;
-using Enemy;
+﻿using Enemies;
 using UnityEngine;
+using View;
 
 namespace Player.Bullet
 {
@@ -26,7 +25,7 @@ namespace Player.Bullet
 
         private void FixedUpdate()
         {
-            _rigidbody.MovePosition(_rigidbody.position + _speed * Direction * Time.deltaTime);
+            _rigidbody.velocity = _direction * _speed;
         }
 
         private void OnCollisionEnter2D(Collision2D other)
@@ -34,6 +33,11 @@ namespace Player.Bullet
             var damageable = other.gameObject.GetComponent<IBulletDamageable>();
             damageable?.HandleBulletEnter(this);
             Push();
+        }
+
+        public override void Push()
+        {
+            ViewPool.Push(this);
         }
     }
 }
