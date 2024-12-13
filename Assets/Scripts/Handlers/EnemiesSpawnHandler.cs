@@ -12,7 +12,7 @@ namespace Handlers
     {
         [SerializeField] private SpawnPoint[] _spawnPoints;
 
-        private IViewPool _viewPool;
+        private IViewPool _viewPool; 
 
         [Inject]
         private void InstallBindings(IViewPool viewPool)
@@ -20,13 +20,13 @@ namespace Handlers
             _viewPool = viewPool;
         }
 
-        private void Awake()
+        private async void Awake()
         {
-            for (int i = 0; i < 4; i++) 
-                Spawn();
+            for (int i = 0; i < 3; i++) 
+                await Spawn();
         }
 
-        public async void Spawn()
+        public async UniTask Spawn()
         {
             var unlockedPoints = _spawnPoints.Where(point => !point.IsLocked).ToArray();
 
@@ -36,12 +36,9 @@ namespace Handlers
                 unlockedPoints = _spawnPoints.Where(point => !point.IsLocked).ToArray();
             }
             
-            Debug.Log($"Unlocked {unlockedPoints.Length} points");
             var index = Random.Range(0, unlockedPoints.Length);
             var position = unlockedPoints[index].transform.position;
             await _viewPool.Pop<Enemy>(position, transform);
-            
-            Debug.Log($"Spawned Enemy at index {index}");
         }
     }
 }
