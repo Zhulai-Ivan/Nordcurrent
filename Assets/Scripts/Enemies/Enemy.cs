@@ -1,7 +1,7 @@
 ﻿using System;
 using Modules;
 using Player.Bullet;
-using States.Enemy;
+using States;
 using Unity.VisualScripting;
 using UnityEngine;
 using View;
@@ -37,16 +37,10 @@ namespace Enemies
             Pushed?.Invoke();
         }
 
-        public void Move(Vector2 targetPosition)
+        public void Move(Vector2 xLimits, Vector2 yLimits)
         {
-            var state = new MoveState(transform, targetPosition, Speed);
-            state.Complete += OnMoveComplete;
+            var state = new MoveState(transform, xLimits, yLimits, Speed);
             _stateMachine.SetState(state);
-        }
-
-        private void OnMoveComplete()
-        {
-            // rotate
         }
     }
 }
