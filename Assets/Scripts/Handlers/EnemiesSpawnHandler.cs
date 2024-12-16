@@ -5,6 +5,7 @@ using Cysharp.Threading.Tasks;
 using Enemies;
 using Level;
 using States;
+using Unity.VisualScripting;
 using UnityEngine;
 using View;
 using Zenject;
@@ -36,20 +37,39 @@ namespace Handlers
 
         public async UniTask Spawn()
         {
-            var unlockedPoints = _spawnPoints.Where(point => !point.IsLocked).ToArray();
+            var unlockedPoints = FindFreeSpawnPoint();
 
-            if (unlockedPoints.Length == 0)
+            if (FindFreeSpawnPoint().Length <= 0)
             {
                 await UniTask.WaitUntil(() => _spawnPoints.Any(point => !point.IsLocked));
-                unlockedPoints = _spawnPoints.Where(point => !point.IsLocked).ToArray();
+                unlockedPoints = FindFreeSpawnPoint();
             }
 
             var index = Random.Range(0, unlockedPoints.Length);
             var position = unlockedPoints[index].transform.position;
             var view = await _viewPool.Pop<Enemy>(position, transform);
+            
+            view.ReadyToSpawn += OnReadyToSpawn;
+            view.Pushed += OnViewPushed;
+            
             _enemies.Add(view);
 
             SetMoveState(view);
+        }
+
+        private void OnViewPushed(Enemy view)
+        {
+            view.Pushed -= OnViewPushed;
+            _enemies.Remove(view);
+        }
+
+        private SpawnPoint[] FindFreeSpawnPoint() =>
+            _spawnPoints.Where(point => !point.IsLocked).ToArray();
+
+        private void OnReadyToSpawn(Enemy view)
+        {
+            view.ReadyToSpawn -= OnReadyToSpawn;
+            Spawn().Forget();
         }
 
         private void SetMoveState(Enemy view)
@@ -62,6 +82,8 @@ namespace Handlers
         {
             foreach (var enemy in _enemies)
             {
+                enemy.ReadyToSpawn -= OnReadyToSpawn;
+                enemy.Pushed -= OnViewPushed;
                 enemy.Push();
             }
 

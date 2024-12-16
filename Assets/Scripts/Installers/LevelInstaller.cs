@@ -12,6 +12,7 @@ namespace Installers
     {
         [SerializeField] private InputManager _inputManager;
         [SerializeField] private LevelHandler _levelHandler;
+        [SerializeField] private EnemiesSpawnHandler _spawnHandler;
 
         public override void InstallBindings()
         {
@@ -28,6 +29,7 @@ namespace Installers
                 .NonLazy();
 
             Container.BindInterfacesAndSelfTo<EnemiesSpawnHandler>()
+                .FromInstance(_spawnHandler)
                 .AsSingle();
 
             Container.Bind<LevelHandler>()

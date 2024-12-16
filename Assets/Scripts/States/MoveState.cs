@@ -35,7 +35,7 @@ namespace States
 
         private async UniTaskVoid Move()
         {
-            while (!_cancellationTokenSource.Token.IsCancellationRequested)
+            while (_cancellationTokenSource != null && !_cancellationTokenSource.Token.IsCancellationRequested)
             {
                 _targetPosition = new Vector2(
                     x: Random.Range(-_xLimits.x, _xLimits.x),
@@ -51,9 +51,15 @@ namespace States
                     .OnComplete(() => tcs.TrySetResult());
 
                 await tcs.Task;
+                
+                if (_cancellationTokenSource == null || _cancellationTokenSource.Token.IsCancellationRequested)
+                    break;
 
                 while (Vector2.Distance(_transform.position, _targetPosition) > 0.1f)
                 {
+                    if (_cancellationTokenSource == null || _cancellationTokenSource.Token.IsCancellationRequested)
+                        break;
+                    
                     _transform.position = Vector3.MoveTowards(
                         _transform.position,
                         _targetPosition,
@@ -70,7 +76,7 @@ namespace States
         {
             _cancellationTokenSource?.Cancel();
             _cancellationTokenSource = null;
-            
+
             Complete?.Invoke();
         }
     }

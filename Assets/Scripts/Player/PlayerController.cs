@@ -40,7 +40,7 @@ namespace Player
 
         private async void OnFire()
         {
-            var bullet = await _viewPool.Pop<Bullet.Bullet>(_bulletSpawnPoint.position, _bulletSpawnPoint);
+            var bullet = await _viewPool.Pop<Bullet.Bullet>(_bulletSpawnPoint.position, null);
             bullet.Direction = _bulletSpawnPoint.up.normalized;
         }
 

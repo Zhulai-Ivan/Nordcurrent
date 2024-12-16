@@ -19,7 +19,8 @@ namespace Enemies
 
         public float Speed => /*.Speed*/ 5f;
 
-        public event Action Pushed;
+        public event Action<Enemy> Pushed;
+        public event Action<Enemy> ReadyToSpawn;
 
         private void Awake()
         {
@@ -28,13 +29,13 @@ namespace Enemies
 
         public void HandleBulletEnter(Bullet bullet)
         {
-            Push();
+            Dead();
         }
 
         public override void Push()
         {
             ViewPool.Push(this);
-            Pushed?.Invoke();
+            Pushed?.Invoke(this);
         }
 
         public void Move(Vector2 xLimits, Vector2 yLimits)
@@ -42,5 +43,15 @@ namespace Enemies
             var state = new MoveState(transform, xLimits, yLimits, Speed);
             _stateMachine.SetState(state);
         }
+
+        private void Dead()
+        {
+            var state = new DeathState(this);
+            state.Complete += OnDeathComplete;
+            _stateMachine.SetState(state);
+        }
+
+        private void OnDeathComplete() =>
+            ReadyToSpawn?.Invoke(this);
     }
 }
