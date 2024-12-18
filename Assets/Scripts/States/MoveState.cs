@@ -47,19 +47,16 @@ namespace States
 
                 var tcs = new UniTaskCompletionSource();
 
-                _transform.DORotate(new Vector3(0, 0, angle), _speed)
+                _transform.DORotate(new Vector3(0, 0, angle), angle / _speed)
                     .OnComplete(() => tcs.TrySetResult());
 
                 await tcs.Task;
-                
+
                 if (_cancellationTokenSource == null || _cancellationTokenSource.Token.IsCancellationRequested)
                     break;
 
-                while (Vector2.Distance(_transform.position, _targetPosition) > 0.1f)
+                while (_transform != null && Vector2.Distance(_transform.position, _targetPosition) > 0.1f)
                 {
-                    if (_cancellationTokenSource == null || _cancellationTokenSource.Token.IsCancellationRequested)
-                        break;
-                    
                     _transform.position = Vector3.MoveTowards(
                         _transform.position,
                         _targetPosition,
@@ -68,6 +65,9 @@ namespace States
 
                     await UniTask.Yield(cancellationToken: _cancellationTokenSource.Token)
                         .SuppressCancellationThrow();
+
+                    if (_cancellationTokenSource == null || _cancellationTokenSource.Token.IsCancellationRequested)
+                        break;
                 }
             }
         }

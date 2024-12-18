@@ -2,10 +2,9 @@
 using Modules;
 using Player.Bullet;
 using States;
-using Unity.VisualScripting;
-using UnityEngine;
 using View;
 using StateMachine = States.StateMachine;
+using Vector2 = UnityEngine.Vector2;
 
 namespace Enemies
 {
@@ -16,8 +15,10 @@ namespace Enemies
         private BaseTower _tower;
         
         private StateMachine _stateMachine;
+        private Vector2 _xLimits;
+        private Vector2 _yLimits;
 
-        public float Speed => /*.Speed*/ 5f;
+        private float Speed => _tracks.Speed;
 
         public event Action<Enemy> Pushed;
         public event Action<Enemy> ReadyToSpawn;
@@ -25,6 +26,12 @@ namespace Enemies
         private void Awake()
         {
             _stateMachine = new StateMachine();
+        }
+
+        public void SetPositionLimits(Vector2 xLimits, Vector2 yLimits)
+        {
+            _xLimits = xLimits;
+            _yLimits = yLimits;
         }
 
         public void HandleBulletEnter(Bullet bullet)
@@ -38,9 +45,9 @@ namespace Enemies
             Pushed?.Invoke(this);
         }
 
-        public void Move(Vector2 xLimits, Vector2 yLimits)
+        public void Move()
         {
-            var state = new MoveState(transform, xLimits, yLimits, Speed);
+            var state = new MoveState(transform, _xLimits, _yLimits, Speed);
             _stateMachine.SetState(state);
         }
 
@@ -53,5 +60,10 @@ namespace Enemies
 
         private void OnDeathComplete() =>
             ReadyToSpawn?.Invoke(this);
+
+        public void SetTrack(BaseTrack track)
+        {
+            _tracks = track;
+        }
     }
 }

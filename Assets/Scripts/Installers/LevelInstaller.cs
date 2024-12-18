@@ -1,5 +1,6 @@
 using Handlers;
 using Level;
+using Player;
 using Player.Input;
 using Providers;
 using UnityEngine;
@@ -12,7 +13,8 @@ namespace Installers
     {
         [SerializeField] private InputManager _inputManager;
         [SerializeField] private LevelHandler _levelHandler;
-        [SerializeField] private EnemiesSpawnHandler _spawnHandler;
+        [SerializeField] private SpawnPoint[] _spawnPoints;
+        [SerializeField] private PlayerController _playerController;
 
         public override void InstallBindings()
         {
@@ -29,8 +31,12 @@ namespace Installers
                 .NonLazy();
 
             Container.BindInterfacesAndSelfTo<EnemiesSpawnHandler>()
-                .FromInstance(_spawnHandler)
-                .AsSingle();
+                .AsSingle()
+                .WithArguments(_spawnPoints);
+            
+            Container.BindInterfacesAndSelfTo<PlayerSpawnHandler>()
+                .AsSingle()
+                .WithArguments(_playerController, _spawnPoints);
 
             Container.Bind<LevelHandler>()
                 .FromInstance(_levelHandler)

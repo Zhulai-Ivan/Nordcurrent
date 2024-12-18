@@ -8,7 +8,7 @@ namespace Player.Bullet
     public class Bullet : BaseView
     {
         [SerializeField] private Rigidbody2D _rigidbody;
-        [SerializeField] private float _speed = 6f;
+        [SerializeField] private float _speed;
 
         private Vector2 _direction;
 

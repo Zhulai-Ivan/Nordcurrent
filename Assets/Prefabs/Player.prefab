@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 2096360502767156433}
   - component: {fileID: 6792041028122554109}
   - component: {fileID: 5287312403890600824}
+  - component: {fileID: 4930086215882676183}
   m_Layer: 3
   m_Name: Player
   m_TagString: Untagged
@@ -126,6 +127,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _rigidbody: {fileID: 2096360502767156433}
   _bulletSpawnPoint: {fileID: 7284486613685456042}
+  _view: {fileID: 4930086215882676183}
+--- !u!114 &4930086215882676183
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 476246692546587748}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e03970eea774975882d5cd0d58a7c30, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1132888355117118772
 GameObject:
   m_ObjectHideFlags: 0
@@ -136,7 +150,7 @@ GameObject:
   m_Component:
   - component: {fileID: 969902940557121946}
   - component: {fileID: 2841156521960113665}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: GunConnector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -219,7 +233,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7284486613685456042}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: BulletSpawnPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -251,7 +265,7 @@ GameObject:
   m_Component:
   - component: {fileID: 231043010015394360}
   - component: {fileID: 3615132583531857740}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Track
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -335,7 +349,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7271592567815268959}
   - component: {fileID: 9054613948875736770}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Tower
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -421,7 +435,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8442057909907802654}
   - component: {fileID: 5707671713679751835}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -505,7 +519,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4726258406910548401}
   - component: {fileID: 3226771935966779333}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Track
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -589,7 +603,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6408899534873091809}
   - component: {fileID: 6469287977632038005}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Gun
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -673,7 +687,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5682400842979851973}
   - component: {fileID: 8688197956109133118}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Hull
   m_TagString: Untagged
   m_Icon: {fileID: 0}

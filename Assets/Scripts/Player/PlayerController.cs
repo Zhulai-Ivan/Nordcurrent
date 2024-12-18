@@ -1,3 +1,6 @@
+using System;
+using Enemies;
+using Modules;
 using Player.Input;
 using UnityEngine;
 using View;
@@ -10,9 +13,12 @@ namespace Player
     {
         [SerializeField] private Rigidbody2D _rigidbody;
         [SerializeField] private Transform _bulletSpawnPoint;
+        [SerializeField] private PlayerView _view;
 
         private InputManager _inputManager;
         private IViewPool _viewPool;
+
+        public event Action Dead;
 
         [Inject]
         private void InstallBindings(InputManager inputManager, IViewPool viewPool)
@@ -24,6 +30,8 @@ namespace Player
         private void OnEnable()
         {
             Subscribe();
+            
+            _view.SetTrack(new FastTrack());
         }
 
         private void Subscribe()
@@ -35,7 +43,11 @@ namespace Player
 
         private void OnRotate(float direction)
         {
-            transform.Rotate(Vector3.back, direction * Time.fixedDeltaTime);
+            float rotationChange = -direction * _view.Speed * 10f * Time.fixedDeltaTime;
+            float targetAngle = transform.eulerAngles.z + rotationChange;
+            Quaternion targetRotation = Quaternion.Euler(0, 0, targetAngle);
+            
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, Mathf.Abs(rotationChange));
         }
 
         private async void OnFire()
@@ -47,7 +59,16 @@ namespace Player
         private void OnMove(float direction)
         {
             Vector2 moveDirection = transform.up * direction;
-            _rigidbody.MovePosition(_rigidbody.position + moveDirection * Time.fixedDeltaTime);
+            _rigidbody.MovePosition(_rigidbody.position + moveDirection * _view.Speed * Time.fixedDeltaTime);
+        }
+
+        private void OnCollisionEnter2D(Collision2D other)
+        {
+            if (other.gameObject.TryGetComponent<Enemy>(out var enemy))
+            {
+               enemy.Move();
+               Dead?.Invoke();
+            }
         }
 
         private void OnDisable()

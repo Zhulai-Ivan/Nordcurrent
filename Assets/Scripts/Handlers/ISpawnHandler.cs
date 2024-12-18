@@ -1,11 +1,11 @@
 ﻿using Cysharp.Threading.Tasks;
-using UnityEngine;
-using View;
+using Level;
 
 namespace Handlers
 {
     public interface ISpawnHandler
     {
         UniTask Spawn();
+        UniTask<SpawnPoint> FindSpawnPoint();
     }
 }

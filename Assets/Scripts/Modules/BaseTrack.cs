@@ -2,6 +2,6 @@
 {
     public abstract class BaseTrack
     {
-        public float Speed { get; protected set; }
+        public abstract float Speed { get; protected set; }
     }
 }
