@@ -2,17 +2,16 @@
 using Modules;
 using Player.Bullet;
 using States;
+using UnityEngine;
 using View;
 using StateMachine = States.StateMachine;
 using Vector2 = UnityEngine.Vector2;
 
 namespace Enemies
 {
-    public class Enemy : BaseView, IBulletDamageable
+    public class Enemy : TankView, IBulletDamageable
     {
         private BaseTrack _tracks;
-        private BaseBody _body;
-        private BaseTower _tower;
         
         private StateMachine _stateMachine;
         private Vector2 _xLimits;
@@ -22,6 +21,9 @@ namespace Enemies
 
         public event Action<Enemy> Pushed;
         public event Action<Enemy> ReadyToSpawn;
+
+        public override string Name => "Enemy";
+        public override ModuleType TrackType => _tracks.Type;
 
         private void Awake()
         {
@@ -61,7 +63,7 @@ namespace Enemies
         private void OnDeathComplete() =>
             ReadyToSpawn?.Invoke(this);
 
-        public void SetTrack(BaseTrack track)
+        public override void SetTrack(BaseTrack track)
         {
             _tracks = track;
         }

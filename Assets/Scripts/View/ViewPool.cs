@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using ModestTree;
-using Player.Bullet;
 using Providers;
 using UnityEngine;
 using Zenject;
-using Object = UnityEngine.Object;
 
 namespace View
 {
@@ -24,7 +22,7 @@ namespace View
             _container = container;
         }
         
-        public async UniTask<T> Pop<T>(Vector3 position, Transform parent) where T : BaseView
+        public async UniTask<T> Pop<T>(Vector3 position, Vector3 rotation, Vector3 scale, Transform parent) where T : BaseView
         {
             T view = null;
             if (_typePool.Keys.ContainsItem(typeof(T).Name) &&_typePool[typeof(T).Name].Count > 0)
@@ -36,7 +34,8 @@ namespace View
             else
             {
                 var prefab = await _addressablesProvider.LoadAsync<GameObject>(typeof(T).Name);
-                var instance = _container.InstantiatePrefabForComponent<T>(prefab, position, Quaternion.identity, parent);
+                var instance = _container.InstantiatePrefabForComponent<T>(prefab, position, Quaternion.Euler(rotation), parent);
+                instance.transform.localScale = scale;
                 view = instance.GetComponent<T>();
                 
                 if(view == null)

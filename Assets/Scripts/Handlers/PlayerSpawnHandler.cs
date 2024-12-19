@@ -2,59 +2,85 @@
 using System.Linq;
 using Cysharp.Threading.Tasks;
 using Level;
+using Level.Data;
+using Modules;
 using Player;
+using UnityEngine;
+using View;
 using Zenject;
 using Random = UnityEngine.Random;
 
 namespace Handlers
 {
-    public class PlayerSpawnHandler : ISpawnHandler, IDisposable
+    public class PlayerSpawnHandler : ISpawnHandler
     {
-        private PlayerController _player;
+        private PlayerView _player;
         private SpawnPoint[] _spawnPoints;
+        private IViewPool _viewPool;
 
         [Inject]
-        private void InstallBindings(PlayerController player, SpawnPoint[] spawnPoints)
+        private void InstallBindings(SpawnPoint[] spawnPoints, IViewPool viewPool)
         {
-            _player = player;
             _spawnPoints = spawnPoints;
-
-            _player.Dead += StartSpawn;
+            _viewPool = viewPool;
         }
 
-        private void StartSpawn()
+        private async void StartRespawn()
         {
-            Spawn().Forget();
-        }
-        
-        public async UniTask Spawn()
-        {
-            _player.gameObject.SetActive(false); 
-            
             await UniTask.Delay(1000);
             
+            if (_player != null) 
+                _player.Controller.Dead -= StartRespawn;
+
+            Spawn().Forget();
+        }
+
+        public async UniTask Spawn(ViewData view)
+        {
+            _player = await _viewPool.Pop<PlayerView>(view.position, view.rotation,
+                view.scale, null);
+            
+            _player.SetTrack(GetTrack(view.trackType));
+            
+            _player.Controller.Dead += StartRespawn;
+        }
+
+        private BaseTrack GetTrack(ModuleType type)
+        {
+            switch (type)
+            {
+                case ModuleType.FastTrack:
+                    return new FastTrack();
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
+            }
+        }
+        
+        public async UniTask InitSpawn() => 
+            await Spawn();
+
+        public async UniTask Spawn()
+        {
             var point = await FindSpawnPoint();
-            _player.gameObject.transform.position = point.transform.position;
-            _player.gameObject.SetActive(true);
+            var position = point.transform.position;
+            
+            _player = await _viewPool.Pop<PlayerView>(position, Vector3.one, Vector3.one, null);
+            _player.Controller.Dead += StartRespawn;
         }
 
         public async UniTask<SpawnPoint> FindSpawnPoint()
         {
-            var unlockedPoints = _spawnPoints.Where(point => !point.IsLocked).ToArray();;
+            var unlockedPoints = _spawnPoints.Where(point => !point.IsLocked).ToArray();
 
             if (unlockedPoints.Length <= 0)
             {
                 await UniTask.WaitUntil(() => _spawnPoints.Any(point => !point.IsLocked));
-                unlockedPoints = _spawnPoints.Where(point => !point.IsLocked).ToArray();;;
+                unlockedPoints = _spawnPoints.Where(point => !point.IsLocked).ToArray();
             }
-            
+
             var index = Random.Range(0, unlockedPoints.Length);
             return unlockedPoints[index];
-        }
-
-        public void Dispose()
-        {
-            _player.Dead -= StartSpawn;
         }
     }
 }

@@ -37,6 +37,9 @@ namespace States
         {
             while (_cancellationTokenSource != null && !_cancellationTokenSource.Token.IsCancellationRequested)
             {
+                if (!Application.isPlaying)
+                    break;
+
                 _targetPosition = new Vector2(
                     x: Random.Range(-_xLimits.x, _xLimits.x),
                     y: Random.Range(-_yLimits.y, _yLimits.y)

@@ -14,7 +14,7 @@ namespace Installers
         [SerializeField] private InputManager _inputManager;
         [SerializeField] private LevelHandler _levelHandler;
         [SerializeField] private SpawnPoint[] _spawnPoints;
-        [SerializeField] private PlayerController _playerController;
+        [SerializeField] private SceneDataCollector _sceneDataCollector;
 
         public override void InstallBindings()
         {
@@ -29,17 +29,27 @@ namespace Installers
             Container.BindInterfacesTo<ViewPool>()
                 .AsSingle()
                 .NonLazy();
-
+            
             Container.BindInterfacesAndSelfTo<EnemiesSpawnHandler>()
                 .AsSingle()
                 .WithArguments(_spawnPoints);
             
             Container.BindInterfacesAndSelfTo<PlayerSpawnHandler>()
                 .AsSingle()
-                .WithArguments(_playerController, _spawnPoints);
+                .WithArguments(_spawnPoints);
 
             Container.Bind<LevelHandler>()
                 .FromInstance(_levelHandler)
+                .AsSingle();
+            
+            Container.BindInterfacesAndSelfTo<LevelLoader>()
+                .AsSingle()
+                .NonLazy();
+
+            Container.Bind<SceneDataCollector>()
+                .FromInstance(_sceneDataCollector);
+
+            Container.BindInterfacesAndSelfTo<LevelSaver>()
                 .AsSingle();
         }
     }

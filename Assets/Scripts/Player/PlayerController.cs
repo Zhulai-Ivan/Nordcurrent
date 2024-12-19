@@ -25,6 +25,8 @@ namespace Player
         {
             _inputManager = inputManager;
             _viewPool = viewPool;
+            
+            _view.Setup(this);
         }
 
         private void OnEnable()
@@ -52,7 +54,7 @@ namespace Player
 
         private async void OnFire()
         {
-            var bullet = await _viewPool.Pop<Bullet.Bullet>(_bulletSpawnPoint.position, null);
+            var bullet = await _viewPool.Pop<Bullet.Bullet>(_bulletSpawnPoint.position, Vector3.one, Vector3.one, null);
             bullet.Direction = _bulletSpawnPoint.up.normalized;
         }
 
@@ -64,10 +66,10 @@ namespace Player
 
         private void OnCollisionEnter2D(Collision2D other)
         {
-            if (other.gameObject.TryGetComponent<Enemy>(out var enemy))
+            if (other.gameObject.TryGetComponent<Enemy>(out var _))
             {
-               enemy.Move();
                Dead?.Invoke();
+               _view.Push();
             }
         }
 

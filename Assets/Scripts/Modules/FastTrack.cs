@@ -3,7 +3,9 @@
     public class FastTrack : BaseTrack
     {
         private float _speed = 10f;
-        
+
+        public override ModuleType Type => ModuleType.FastTrack;
+
         public override float Speed
         {
             get => _speed;
