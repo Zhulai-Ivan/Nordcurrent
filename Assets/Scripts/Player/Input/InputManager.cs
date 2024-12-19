@@ -7,8 +7,6 @@ namespace Player.Input
 {
     public class InputManager : MonoBehaviour
     {
-        private float _moveDirection = 0f;
-
         public event Action<float> Move;
         public event Action<float> Rotate;
         public event Action Fire;

@@ -30,7 +30,7 @@ namespace Handlers
 
         public async UniTask InitSpawn()
         {
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < Const.EnemiesCount; i++)
             {
                 await Spawn();
             }
